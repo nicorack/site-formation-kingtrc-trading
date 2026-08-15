@@ -4,6 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/useAuth";
+import { ThemeProvider } from "@/context/ThemeContext";
+import { LanguageProvider } from "@/context/LanguageContext";
 import Index from "./pages/Index";
 import Formations from "./pages/Formations";
 import FormationDetail from "./pages/FormationDetail";
@@ -24,6 +26,8 @@ const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
+    <ThemeProvider>
+    <LanguageProvider>
     <TooltipProvider>
       <Toaster />
       <Sonner />
@@ -51,6 +55,8 @@ const App = () => (
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
+    </LanguageProvider>
+    </ThemeProvider>
   </QueryClientProvider>
 );
 

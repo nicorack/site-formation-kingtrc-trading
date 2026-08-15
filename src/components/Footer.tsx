@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
-import { Mail, Phone, MessageCircle } from "lucide-react";
+import { Mail, Phone, MessageCircle, ExternalLink } from "lucide-react";
+import { SITE } from "@/lib/site";
 
 export function Footer() {
   const navLinks = [
@@ -11,8 +12,8 @@ export function Footer() {
 
   const supportLinks = [
     { label: "FAQ", to: "/faq" },
-    { label: "Conditions d'utilisation", to: "/" },
-    { label: "Politique de confidentialité", to: "/" },
+    { label: "Contact", to: "/contact" },
+    { label: "Mes formations", to: "/mes-formations" },
   ];
 
   return (
@@ -58,6 +59,14 @@ export function Footer() {
                 </li>
               ))}
             </ul>
+            <a
+              href={SITE.journal}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 inline-flex items-center gap-1 text-sm text-primary-foreground/70 hover:text-accent transition-colors"
+            >
+              Journal de Trading <ExternalLink size={12} />
+            </a>
           </div>
 
           {/* Contact */}
@@ -70,11 +79,11 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2 text-sm text-primary-foreground/70">
                 <Phone size={14} className="text-accent shrink-0" />
-                <a href="tel:+261382696825" className="hover:text-accent transition-colors">038 26 968 25</a>
+                <a href="tel:+261329622668" className="hover:text-accent transition-colors">032 96 226 68</a>
               </li>
             </ul>
             <a
-              href="https://wa.me/261382696825"
+              href={SITE.whatsapp}
               target="_blank"
               rel="noopener noreferrer"
               className="mt-4 inline-flex items-center gap-2 text-sm text-primary-foreground/70 hover:text-accent transition-colors"

@@ -1,13 +1,21 @@
 import { useEffect, useState } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { ArrowLeft, Clock, Users, Star, BookOpen, Play, FileText, HelpCircle, CheckCircle, Phone, MessageCircle, Upload, Image } from "lucide-react";
+import {
+  ArrowLeft, Clock, Users, Star, BookOpen, Play, FileText, HelpCircle,
+  CheckCircle, Phone, MessageCircle, Upload, Image as ImageIcon, MapPin,
+  Send, Clock3, LifeBuoy,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import { Layout } from "@/components/Layout";
 import { formatPrice } from "@/lib/data";
+import { SITE, CAT_SALLE, formatDual } from "@/lib/site";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { useI18n } from "@/context/LanguageContext";
 import { toast } from "sonner";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -23,21 +31,21 @@ const FormationDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { user } = useAuth();
+  const { t } = useI18n();
   const [course, setCourse] = useState<Formation | null>(null);
   const [modules, setModules] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [ordering, setOrdering] = useState(false);
-  const [hasAccess, setHasAccess] = useState(false);
+  const [orderStatus, setOrderStatus] = useState<string | null>(null);
+  const [reference, setReference] = useState("");
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [proofPreview, setProofPreview] = useState<string | null>(null);
 
+  const hasAccess = orderStatus === "confirmed";
+
   useEffect(() => {
     const fetchCourse = async () => {
-      const { data: f } = await supabase
-        .from("formations")
-        .select("*")
-        .eq("id", id!)
-        .single();
+      const { data: f } = await supabase.from("formations").select("*").eq("id", id!).maybeSingle();
       setCourse(f);
 
       if (f) {
@@ -56,16 +64,16 @@ const FormationDetail = () => {
         );
       }
 
-      // Check if user has confirmed access
       if (user) {
         const { data: order } = await supabase
           .from("orders")
-          .select("id")
+          .select("status")
           .eq("user_id", user.id)
           .eq("formation_id", id!)
-          .eq("status", "confirmed")
+          .order("created_at", { ascending: false })
+          .limit(1)
           .maybeSingle();
-        setHasAccess(!!order);
+        setOrderStatus(order?.status ?? null);
       }
 
       setLoading(false);
@@ -87,33 +95,32 @@ const FormationDetail = () => {
       navigate("/auth");
       return;
     }
-    if (!proofFile) {
-      toast.error("Veuillez joindre la preuve de paiement (capture d'écran)");
-      return;
-    }
     setOrdering(true);
     try {
-      // Upload proof image
-      const ext = proofFile.name.split(".").pop();
-      const path = `${user.id}/${Date.now()}.${ext}`;
-      const { error: uploadErr } = await supabase.storage.from("payment-proofs").upload(path, proofFile);
-      if (uploadErr) throw uploadErr;
-      const { data: urlData } = supabase.storage.from("payment-proofs").getPublicUrl(path);
+      let proofUrl: string | null = null;
+      if (proofFile) {
+        const ext = proofFile.name.split(".").pop();
+        const path = `${user.id}/${Date.now()}.${ext}`;
+        const { error: uploadErr } = await supabase.storage.from("payment-proofs").upload(path, proofFile);
+        if (uploadErr) throw uploadErr;
+        proofUrl = supabase.storage.from("payment-proofs").getPublicUrl(path).data.publicUrl;
+      }
 
       const { error } = await supabase.from("orders").insert({
         user_id: user.id,
         formation_id: course!.id,
         amount: course!.price,
         payment_method: "mvola",
-        payment_proof_url: urlData.publicUrl,
+        payment_reference: reference.trim() || null,
+        payment_proof_url: proofUrl,
         status: "pending",
       });
       if (error) throw error;
-      toast.success(
-        "Commande créée avec preuve de paiement ! L'admin va confirmer votre accès."
-      );
+      setOrderStatus("pending");
       setProofFile(null);
       setProofPreview(null);
+      setReference("");
+      toast.success(t("pay.pending"));
     } catch (error: any) {
       toast.error(error.message);
     } finally {
@@ -140,23 +147,26 @@ const FormationDetail = () => {
     );
   }
 
+  const isSalle = course.category === CAT_SALLE;
   const totalLessons = modules.reduce((acc: number, m: any) => acc + (m.lessons?.length || 0), 0);
 
   return (
     <Layout>
-      {/* Header */}
       <section className="gradient-hero py-12 md:py-16">
         <div className="container mx-auto px-4">
           <Link to="/formations" className="mb-6 inline-flex items-center gap-2 text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors">
             <ArrowLeft size={16} /> Retour aux formations
           </Link>
           <div className="grid gap-8 lg:grid-cols-3">
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="lg:col-span-2"
-            >
-              <Badge className="mb-3 bg-accent/20 text-accent border-accent/30">{course.category}</Badge>
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="lg:col-span-2">
+              <div className="mb-3 flex flex-wrap items-center gap-2">
+                <Badge className="bg-accent/20 text-accent border-accent/30">{course.category}</Badge>
+                {course.original_price && (
+                  <Badge className="gradient-accent border-0 text-accent-foreground text-[10px] uppercase tracking-wider">
+                    Promo
+                  </Badge>
+                )}
+              </div>
               <h1 className="mb-4 font-display text-3xl font-bold text-primary-foreground md:text-4xl leading-tight">
                 {course.title}
               </h1>
@@ -164,14 +174,17 @@ const FormationDetail = () => {
               <div className="flex flex-wrap items-center gap-4 text-sm text-primary-foreground/70">
                 <span className="flex items-center gap-1"><Star size={14} className="text-warning fill-warning" /> {course.rating}</span>
                 <span className="flex items-center gap-1"><Users size={14} /> {course.students_count} apprenants</span>
-                <span className="flex items-center gap-1"><Clock size={14} /> {course.duration}</span>
+                {course.duration && <span className="flex items-center gap-1"><Clock size={14} /> {course.duration}</span>}
                 <span className="flex items-center gap-1"><BookOpen size={14} /> {totalLessons} leçons</span>
                 <Badge variant="outline" className="border-primary-foreground/30 text-primary-foreground">{course.level}</Badge>
+                {isSalle && (
+                  <span className="flex items-center gap-1"><MapPin size={14} /> {SITE.salleLieu}</span>
+                )}
               </div>
               <p className="mt-3 text-sm text-primary-foreground/60">Par {course.instructor}</p>
             </motion.div>
 
-            {/* Price card */}
+            {/* Side card */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -184,76 +197,136 @@ const FormationDetail = () => {
                     {formatPrice(course.original_price)}
                   </span>
                 )}
-                <p className="text-3xl font-bold font-display text-accent">{formatPrice(course.price)}</p>
+                <p className="text-2xl font-bold font-display text-accent">{formatDual(course.price)}</p>
+                {course.original_price && (
+                  <span className="mt-1 inline-block rounded-full gradient-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-foreground">
+                    Tarif promo
+                  </span>
+                )}
               </div>
-              {hasAccess ? (
-                <Button
-                  className="w-full bg-success text-white border-0 font-semibold shadow-lg hover:bg-success/90"
-                  size="lg"
-                  onClick={() => navigate(`/formations/${course.id}/learn`)}
-                >
-                  <Play size={18} className="mr-2" /> Accéder au cours
-                </Button>
-              ) : (
-                <Button
-                  className="w-full gradient-accent text-accent-foreground border-0 font-semibold shadow-lg hover:opacity-90"
-                  size="lg"
-                  onClick={handleOrder}
-                  disabled={ordering}
-                >
-                  {ordering ? "Commande en cours..." : "Acheter la formation"}
-                </Button>
-              )}
-              <p className="mt-3 text-center text-xs text-muted-foreground">Accès à vie après validation • Support WhatsApp</p>
 
-              {/* MVola Payment Info */}
-              <div className="mt-4 rounded-lg bg-accent/5 border border-accent/20 p-4">
-                <p className="mb-2 text-sm font-semibold text-foreground flex items-center gap-2">
-                  <Phone size={14} className="text-accent" /> Paiement MVola
-                </p>
-                <p className="text-sm text-muted-foreground mb-1">
-                  Envoyez <span className="font-bold text-accent">{formatPrice(course.price)}</span> au :
-                </p>
-                  <p className="text-lg font-bold font-display text-foreground">038 26 968 25</p>
-                  <p className="text-xs text-muted-foreground">Nom : <strong>Nico</strong></p>
-
-                  {/* Payment proof upload */}
-                  {!hasAccess && (
-                    <div className="mt-3 space-y-2">
-                      <p className="text-xs font-semibold text-foreground flex items-center gap-1">
-                        <Upload size={12} className="text-accent" /> Preuve de paiement (capture d'écran)
-                      </p>
-                      <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-accent/30 bg-accent/5 p-3 text-sm text-muted-foreground hover:border-accent/50 hover:bg-accent/10 transition-colors">
-                        <Image size={16} className="text-accent" />
-                        {proofFile ? proofFile.name : "Cliquez pour joindre la capture"}
-                        <input type="file" accept="image/*" className="hidden" onChange={handleProofSelect} />
-                      </label>
-                      {proofPreview && (
-                        <img src={proofPreview} alt="Preuve" className="mt-2 rounded-lg border border-border max-h-32 w-full object-contain" />
-                      )}
-                    </div>
-                  )}
+              {isSalle ? (
+                /* ---------- FORMATION EN SALLE ---------- */
+                <div className="space-y-3">
+                  <div className="rounded-lg border border-accent/20 bg-accent/5 p-4">
+                    <p className="mb-1 font-display text-sm font-semibold text-foreground">{t("salle.title")}</p>
+                    <p className="mb-2 flex items-center gap-1 text-sm text-muted-foreground">
+                      <MapPin size={14} className="text-accent" /> {t("salle.place")} : <strong className="text-foreground">{SITE.salleLieu}</strong>
+                    </p>
+                    <p className="text-sm text-muted-foreground">{t("salle.invite")}</p>
+                  </div>
+                  <Button className="w-full gradient-accent text-accent-foreground border-0 font-semibold" size="lg" asChild>
+                    <a href={SITE.facebookFormateur} target="_blank" rel="noopener noreferrer">
+                      <MessageCircle size={18} className="mr-2" /> {t("salle.button")}
+                    </a>
+                  </Button>
+                  <Button variant="outline" className="w-full" asChild>
+                    <a href={`tel:+261${SITE.whatsappDisplay.replace(/\s|^0/g, "")}`}>
+                      <Phone size={16} className="mr-2" /> {SITE.whatsappDisplay}
+                    </a>
+                  </Button>
                 </div>
+              ) : hasAccess ? (
+                /* ---------- ACCÈS DÉBLOQUÉ ---------- */
+                <div className="space-y-3">
+                  <div className="rounded-lg border border-success/30 bg-success/10 p-4">
+                    <p className="flex items-center gap-2 font-display text-sm font-semibold text-success">
+                      <CheckCircle size={16} /> {t("pay.approved")}
+                    </p>
+                    <p className="mt-2 text-sm text-muted-foreground">{t("telegram.desc")}</p>
+                  </div>
+                  <Button className="w-full bg-success text-white border-0 font-semibold hover:bg-success/90" size="lg" asChild>
+                    <a href={SITE.telegram} target="_blank" rel="noopener noreferrer">
+                      <Send size={18} className="mr-2" /> {t("telegram.button")}
+                    </a>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    className="w-full"
+                    size="lg"
+                    onClick={() => navigate(`/formations/${course.id}/learn`)}
+                  >
+                    <Play size={18} className="mr-2" /> Accéder au cours
+                  </Button>
+                </div>
+              ) : orderStatus === "pending" ? (
+                /* ---------- EN ATTENTE ---------- */
+                <div className="rounded-lg border border-warning/30 bg-warning/10 p-4">
+                  <p className="flex items-center gap-2 font-display text-sm font-semibold text-warning">
+                    <Clock3 size={16} /> {t("pay.pending")}
+                  </p>
+                  <p className="mt-2 text-sm text-muted-foreground">{t("pay.wait")}</p>
+                </div>
+              ) : (
+                /* ---------- PAIEMENT MVOLA ---------- */
+                <div className="space-y-3">
+                  <div className="rounded-lg bg-accent/5 border border-accent/20 p-4">
+                    <p className="mb-2 flex items-center gap-2 text-sm font-semibold text-foreground">
+                      <Phone size={14} className="text-accent" /> {t("pay.title")}
+                    </p>
+                    <p className="mb-1 text-sm text-muted-foreground">
+                      {t("pay.send")} <span className="font-bold text-accent">{formatDual(course.price)}</span> {t("pay.to")} :
+                    </p>
+                    <p className="text-lg font-bold font-display text-foreground">{SITE.mvolaNumber}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {t("pay.name")} : <strong>{SITE.mvolaName}</strong>
+                    </p>
+                  </div>
 
-              <div className="mt-4 rounded-lg bg-secondary p-4">
-                <p className="mb-2 text-sm font-semibold text-foreground">Ce cours inclut :</p>
-                <ul className="space-y-1.5 text-xs text-muted-foreground">
-                  <li className="flex items-center gap-2"><CheckCircle size={12} className="text-accent" /> Accès à vie à la formation</li>
-                  <li className="flex items-center gap-2"><Play size={12} className="text-accent" /> Vidéos et contenus ajoutés par l'admin</li>
-                  <li className="flex items-center gap-2"><MessageCircle size={12} className="text-accent" /> Support via WhatsApp</li>
-                  <li className="flex items-center gap-2"><CheckCircle size={12} className="text-accent" /> Validation manuelle du paiement</li>
-                </ul>
+                  <div>
+                    <Label htmlFor="ref" className="text-xs">{t("pay.reference")}</Label>
+                    <Input
+                      id="ref"
+                      value={reference}
+                      onChange={(e) => setReference(e.target.value)}
+                      placeholder="Ex : 123456789"
+                      maxLength={100}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <p className="flex items-center gap-1 text-xs font-semibold text-foreground">
+                      <Upload size={12} className="text-accent" /> {t("pay.proof")}
+                    </p>
+                    <label className="flex cursor-pointer items-center justify-center gap-2 rounded-lg border-2 border-dashed border-accent/30 bg-accent/5 p-3 text-sm text-muted-foreground hover:border-accent/50 hover:bg-accent/10 transition-colors">
+                      <ImageIcon size={16} className="text-accent" />
+                      {proofFile ? proofFile.name : t("pay.attach")}
+                      <input type="file" accept="image/*" className="hidden" onChange={handleProofSelect} />
+                    </label>
+                    {proofPreview && (
+                      <img src={proofPreview} alt="Preuve de paiement" className="mt-2 max-h-32 w-full rounded-lg border border-border object-contain" />
+                    )}
+                  </div>
+
+                  <Button
+                    className="w-full gradient-accent text-accent-foreground border-0 font-semibold shadow-lg hover:opacity-90"
+                    size="lg"
+                    onClick={handleOrder}
+                    disabled={ordering}
+                  >
+                    {ordering ? "Envoi en cours..." : t("pay.submit")}
+                  </Button>
+                  <p className="text-center text-xs text-muted-foreground">{t("pay.wait")}</p>
+                </div>
+              )}
+
+              {/* Support */}
+              <div className="mt-5 rounded-lg border border-border bg-secondary p-4">
+                <p className="flex items-center gap-2 font-display text-sm font-semibold text-foreground">
+                  <LifeBuoy size={14} className="text-accent" /> {t("support.title")}
+                </p>
+                <p className="mt-1 text-xs text-muted-foreground">{t("support.desc")}</p>
+                <Button variant="outline" size="sm" className="mt-3 w-full" asChild>
+                  <a href={SITE.facebookFormateur} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle size={14} className="mr-2" /> {t("support.button")}
+                  </a>
+                </Button>
+                <Button variant="ghost" size="sm" className="mt-1 w-full" asChild>
+                  <a href={SITE.whatsapp} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle size={14} className="mr-2" /> WhatsApp {SITE.whatsappDisplay}
+                  </a>
+                </Button>
               </div>
-
-              {/* WhatsApp */}
-              <a
-                href="https://wa.me/261382696825"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="mt-3 flex items-center justify-center gap-2 rounded-lg bg-success/10 p-3 text-sm font-medium text-success hover:bg-success/20 transition-colors"
-              >
-                <MessageCircle size={16} /> Contacter sur WhatsApp
-              </a>
             </motion.div>
           </div>
         </div>
@@ -263,7 +336,6 @@ const FormationDetail = () => {
         <div className="container mx-auto px-4">
           <div className="grid gap-12 lg:grid-cols-3">
             <div className="lg:col-span-2 space-y-12">
-              {/* Objectives */}
               {course.objectives && course.objectives.length > 0 && (
                 <div>
                   <h2 className="mb-4 font-display text-xl font-bold text-foreground">Objectifs pédagogiques</h2>
@@ -278,7 +350,6 @@ const FormationDetail = () => {
                 </div>
               )}
 
-              {/* Programme */}
               {modules.length > 0 && (
                 <div>
                   <h2 className="mb-4 font-display text-xl font-bold text-foreground">Programme de la formation</h2>
@@ -309,7 +380,6 @@ const FormationDetail = () => {
                 </div>
               )}
 
-              {/* Cover image */}
               {course.image_url && (
                 <div className="rounded-xl overflow-hidden border border-border">
                   <img src={course.image_url} alt={course.title} className="w-full object-cover aspect-video" loading="lazy" width={800} height={450} />
