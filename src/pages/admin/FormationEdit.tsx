@@ -11,8 +11,14 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const categories = ["Trading", "Forex", "Indices synthétiques", "Autre"];
-const levels = ["Débutant", "Intermédiaire", "Avancé"];
+const categories = ["Formation en ligne", "Formation en salle", "Autre"];
+const levels = [
+  "Débutant",
+  "Intermédiaire",
+  "Avancé",
+  "Débutant - Avancé",
+  "Débutant et Intermédiaire",
+];
 
 interface ModuleData {
   id?: string;
@@ -41,10 +47,12 @@ const FormationEdit = () => {
   const [title, setTitle] = useState("");
   const [shortDesc, setShortDesc] = useState("");
   const [description, setDescription] = useState("");
-  const [category, setCategory] = useState("Trading");
+  const [category, setCategory] = useState("Formation en ligne");
   const [level, setLevel] = useState("Débutant");
   const [duration, setDuration] = useState("");
   const [price, setPrice] = useState(0);
+  const [originalPrice, setOriginalPrice] = useState<string>("");
+  const [instructor, setInstructor] = useState("Admin");
   const [imageUrl, setImageUrl] = useState("");
   const [objectives, setObjectives] = useState("");
   const [isActive, setIsActive] = useState(true);
@@ -74,6 +82,8 @@ const FormationEdit = () => {
     setLevel(f.level);
     setDuration(f.duration || "");
     setPrice(f.price);
+    setOriginalPrice(f.original_price ? String(f.original_price) : "");
+    setInstructor(f.instructor || "Admin");
     setImageUrl(f.image_url || "");
     setObjectives((f.objectives || []).join("\n"));
     setIsActive(f.is_active ?? true);
@@ -142,6 +152,8 @@ const FormationEdit = () => {
         level,
         duration,
         price,
+        original_price: originalPrice ? Number(originalPrice) : null,
+        instructor,
         image_url: imageUrl,
         objectives: objectives.split("\n").filter(Boolean),
         is_active: isActive,
@@ -287,6 +299,19 @@ const FormationEdit = () => {
               <div>
                 <Label>Prix (Ar)</Label>
                 <Input type="number" value={price} onChange={(e) => setPrice(Number(e.target.value))} />
+              </div>
+              <div>
+                <Label>Prix normal barré (Ar) — laisser vide si pas de promo</Label>
+                <Input
+                  type="number"
+                  value={originalPrice}
+                  onChange={(e) => setOriginalPrice(e.target.value)}
+                  placeholder="Ex : 90000"
+                />
+              </div>
+              <div>
+                <Label>Formateur</Label>
+                <Input value={instructor} onChange={(e) => setInstructor(e.target.value)} placeholder="Nom du formateur" />
               </div>
               <div className="sm:col-span-2">
                 <Label>URL de l'image</Label>

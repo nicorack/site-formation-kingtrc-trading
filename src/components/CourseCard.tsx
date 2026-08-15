@@ -35,7 +35,7 @@ export function CourseCard({ course }: CourseCardProps) {
         />
         {course.original_price && (
           <div className="absolute top-2 right-2 rounded-full gradient-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-foreground shadow-md">
-            Promo -{Math.round((1 - course.price / course.original_price) * 100)}%
+            Promo
           </div>
         )}
         <div className="absolute bottom-2 right-2">

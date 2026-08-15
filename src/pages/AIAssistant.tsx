@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from "react";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { BackBar } from "@/components/BackBar";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card } from "@/components/ui/card";
@@ -141,6 +142,7 @@ export default function AIAssistant() {
   return (
     <div className="flex min-h-screen flex-col bg-background">
       <Header />
+      <BackBar />
       <main className="container mx-auto flex flex-1 flex-col px-4 py-6">
         <div className="mb-4 flex items-center gap-2">
           <BookOpen className="text-accent" />
