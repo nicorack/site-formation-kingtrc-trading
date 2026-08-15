@@ -1,8 +1,7 @@
 export const categories = [
   "Toutes",
-  "Trading",
-  "Forex",
-  "Indices synthétiques",
+  "Formation en ligne",
+  "Formation en salle",
 ];
 
 export const testimonials = [

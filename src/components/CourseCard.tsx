@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { Star, Clock, Users } from "lucide-react";
 import { formatPrice } from "@/lib/data";
+import { formatDual } from "@/lib/site";
 import { Badge } from "@/components/ui/badge";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -33,11 +34,11 @@ export function CourseCard({ course }: CourseCardProps) {
           height={400}
         />
         {course.original_price && (
-          <div className="absolute top-3 left-3 rounded-full gradient-accent px-3 py-1 text-xs font-semibold text-accent-foreground">
-            -{Math.round((1 - course.price / course.original_price) * 100)}%
+          <div className="absolute top-2 right-2 rounded-full gradient-accent px-2 py-0.5 text-[10px] font-bold uppercase tracking-wider text-accent-foreground shadow-md">
+            Promo -{Math.round((1 - course.price / course.original_price) * 100)}%
           </div>
         )}
-        <div className="absolute top-3 right-3">
+        <div className="absolute bottom-2 right-2">
           <Badge variant="secondary" className={`${levelColors[course.level] || ""} border text-xs`}>
             {course.level}
           </Badge>
@@ -83,8 +84,8 @@ export function CourseCard({ course }: CourseCardProps) {
                 {formatPrice(course.original_price)}
               </span>
             )}
-            <span className="text-lg font-bold font-display text-accent">
-              {formatPrice(course.price)}
+            <span className="text-base font-bold font-display text-accent">
+              {formatDual(course.price)}
             </span>
           </div>
         </div>
