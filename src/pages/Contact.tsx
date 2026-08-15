@@ -1,12 +1,13 @@
 import { Layout } from "@/components/Layout";
 import { motion } from "framer-motion";
-import { Phone, Mail, MessageCircle, Send } from "lucide-react";
+import { Phone, Mail, MessageCircle, Send, LifeBuoy } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { toast } from "sonner";
+import { SITE } from "@/lib/site";
 
 const Contact = () => {
   const [name, setName] = useState("");
@@ -79,6 +80,20 @@ const Contact = () => {
               >
                 <MessageCircle size={20} /> Écrire sur WhatsApp
               </a>
+
+              <div className="rounded-xl border border-border bg-card p-5">
+                <p className="flex items-center gap-2 font-display font-semibold text-foreground">
+                  <LifeBuoy size={18} className="text-accent" /> Contacter le support
+                </p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  Écrivez directement à la page Facebook de l'admin.
+                </p>
+                <Button className="mt-3 w-full gradient-accent text-accent-foreground border-0 font-semibold" asChild>
+                  <a href={SITE.facebookFormateur} target="_blank" rel="noopener noreferrer">
+                    <MessageCircle size={16} className="mr-2" /> Contacter le support
+                  </a>
+                </Button>
+              </div>
             </div>
 
             {/* Contact Form */}
