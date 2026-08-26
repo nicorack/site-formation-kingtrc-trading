@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BookOpen, Play, Clock, CheckCircle, Loader2 } from "lucide-react";
+import { BookOpen, Play, Clock, CheckCircle, Loader2, BellRing, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import { SITE, CAT_ONLINE } from "@/lib/site";
 
 interface EnrolledCourse {
   formation: any;
@@ -14,6 +15,14 @@ interface EnrolledCourse {
   completedLessons: number;
   progress: number;
 }
+
+interface ApprovalNotice {
+  orderId: string;
+  title: string;
+  category: string;
+  approvedAt: string;
+}
+
 
 const MesFormations = () => {
   const { user, loading: authLoading } = useAuth();
