@@ -153,7 +153,8 @@ const OrdersManager = () => {
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Paiement</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Preuve</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Statut</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Date &amp; heure</th>
+
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Actions</th>
                 </tr>
               </thead>
@@ -169,9 +170,14 @@ const OrdersManager = () => {
                     <td className="px-4 py-3 text-sm text-muted-foreground">{o.payment_method || "—"}</td>
                     <td className="px-4 py-3">
                       {o.payment_proof_url ? (
-                        <a href={o.payment_proof_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-accent hover:underline">
-                          <Eye size={14} /> Voir
-                        </a>
+                        <div>
+                          <a href={o.payment_proof_url} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-1 text-xs text-accent hover:underline">
+                            <Eye size={14} /> Voir
+                          </a>
+                          <div className="text-[11px] text-muted-foreground">
+                            Envoyée : {new Date(o.created_at).toLocaleString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit" })}
+                          </div>
+                        </div>
                       ) : (
                         <span className="text-xs text-muted-foreground">—</span>
                       )}
@@ -182,8 +188,12 @@ const OrdersManager = () => {
                       </Badge>
                     </td>
                     <td className="px-4 py-3 text-sm text-muted-foreground">
-                      {new Date(o.created_at).toLocaleDateString("fr-FR")}
+                      <div>{new Date(o.created_at).toLocaleDateString("fr-FR")}</div>
+                      <div className="text-xs">
+                        {new Date(o.created_at).toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}
+                      </div>
                     </td>
+
                     <td className="px-4 py-3">
                       {o.status === "pending" && (
                         <div className="flex gap-1">

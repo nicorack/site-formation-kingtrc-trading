@@ -34,7 +34,7 @@ const About = () => {
             <Video size={28} className="mb-3 text-accent" />
             <h2 className="font-display text-xl font-bold text-foreground">{t("about.onlineTitle")}</h2>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t("about.onlineDesc")}</p>
-            <p className="mt-4 font-display font-bold text-accent">{formatDual(22500)}</p>
+            <p className="mt-4 font-display font-bold text-accent">{formatDual(84000)}</p>
             <Button className="mt-4 w-full gradient-accent text-accent-foreground border-0" asChild>
               <Link to="/formations">{t("nav.formations")}</Link>
             </Button>

@@ -13,10 +13,16 @@ export const SITE = {
 export const CAT_ONLINE = "Formation en ligne";
 export const CAT_SALLE = "Formation en salle";
 
+const USD_OVERRIDES: Record<number, number> = {
+  84000: 20,
+  225000: 50,
+};
+
 export function usdFromAr(price: number) {
-  return Math.round(price / SITE.usdRate);
+  return USD_OVERRIDES[price] ?? Math.round(price / SITE.usdRate);
 }
 
 export function formatDual(price: number) {
   return `${usdFromAr(price)}$ ou ${new Intl.NumberFormat("fr-MG").format(price)} Ar`;
 }
+
