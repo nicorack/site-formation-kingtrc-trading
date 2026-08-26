@@ -28,6 +28,7 @@ const MesFormations = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const [courses, setCourses] = useState<EnrolledCourse[]>([]);
+  const [notices, setNotices] = useState<ApprovalNotice[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -43,9 +44,20 @@ const MesFormations = () => {
     // Get confirmed orders
     const { data: orders } = await supabase
       .from("orders")
-      .select("formation_id")
+      .select("id, formation_id, updated_at, formations(title, category)")
       .eq("user_id", user!.id)
-      .eq("status", "confirmed");
+      .eq("status", "confirmed")
+      .order("updated_at", { ascending: false });
+
+    setNotices(
+      (orders || []).map((o: any) => ({
+        orderId: o.id,
+        title: o.formations?.title || "Formation",
+        category: o.formations?.category || "",
+        approvedAt: o.updated_at,
+      }))
+    );
+
 
     if (!orders || orders.length === 0) {
       setLoading(false);
