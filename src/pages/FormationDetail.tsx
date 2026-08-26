@@ -240,14 +240,7 @@ const FormationDetail = () => {
                       <Send size={18} className="mr-2" /> {t("telegram.button")}
                     </a>
                   </Button>
-                  <Button
-                    variant="outline"
-                    className="w-full"
-                    size="lg"
-                    onClick={() => navigate(`/formations/${course.id}/learn`)}
-                  >
-                    <Play size={18} className="mr-2" /> Accéder au cours
-                  </Button>
+
                 </div>
               ) : orderStatus === "pending" ? (
                 /* ---------- EN ATTENTE ---------- */
