@@ -153,7 +153,8 @@ const OrdersManager = () => {
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Paiement</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Preuve</th>
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Statut</th>
-                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Date</th>
+                  <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Date &amp; heure</th>
+
                   <th className="px-4 py-3 text-left text-xs font-medium text-muted-foreground uppercase">Actions</th>
                 </tr>
               </thead>
