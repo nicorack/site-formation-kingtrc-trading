@@ -123,8 +123,55 @@ const MesFormations = () => {
         </div>
       </section>
 
+      {notices.length > 0 && (
+        <section className="pt-8">
+          <div className="container mx-auto px-4 space-y-3">
+            {notices.map((n) => (
+              <div
+                key={n.orderId}
+                className="rounded-xl border border-success/30 bg-success/5 p-4 sm:p-5"
+              >
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                  <div className="flex items-start gap-3">
+                    <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-success/15 text-success">
+                      <BellRing size={18} />
+                    </span>
+                    <div>
+                      <p className="font-medium text-foreground">
+                        Paiement approuvé — accès débloqué : {n.title}
+                      </p>
+                      <p className="text-xs text-muted-foreground">
+                        Approuvé le{" "}
+                        {new Date(n.approvedAt).toLocaleDateString("fr-FR", {
+                          day: "2-digit",
+                          month: "2-digit",
+                          year: "numeric",
+                        })}{" "}
+                        à{" "}
+                        {new Date(n.approvedAt).toLocaleTimeString("fr-FR", {
+                          hour: "2-digit",
+                          minute: "2-digit",
+                        })}
+                      </p>
+                    </div>
+                  </div>
+                  {n.category === CAT_ONLINE && (
+                    <Button size="sm" asChild className="shrink-0">
+                      <a href={SITE.telegram} target="_blank" rel="noopener noreferrer">
+                        <Send size={14} className="mr-2" /> Ouvrir groupe Telegram
+                      </a>
+                    </Button>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
       <section className="py-10">
         <div className="container mx-auto px-4">
+
           {courses.length === 0 ? (
             <div className="rounded-xl border border-border bg-card p-12 text-center">
               <BookOpen size={48} className="mx-auto mb-4 text-muted-foreground" />
