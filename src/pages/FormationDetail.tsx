@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Layout } from "@/components/Layout";
 import { formatPrice } from "@/lib/data";
-import { SITE, CAT_SALLE, formatDual } from "@/lib/site";
+import { SITE, CAT_SALLE, CAT_SPECIAL, formatDual } from "@/lib/site";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/context/LanguageContext";
