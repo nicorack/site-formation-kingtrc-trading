@@ -14,6 +14,35 @@ export type Database = {
   }
   public: {
     Tables: {
+      formation_links: {
+        Row: {
+          drive_url: string | null
+          formation_id: string
+          telegram_url: string | null
+          updated_at: string
+        }
+        Insert: {
+          drive_url?: string | null
+          formation_id: string
+          telegram_url?: string | null
+          updated_at?: string
+        }
+        Update: {
+          drive_url?: string | null
+          formation_id?: string
+          telegram_url?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "formation_links_formation_id_fkey"
+            columns: ["formation_id"]
+            isOneToOne: true
+            referencedRelation: "formations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       formations: {
         Row: {
           category: string

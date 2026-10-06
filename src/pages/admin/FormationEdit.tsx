@@ -56,6 +56,8 @@ const FormationEdit = () => {
   const [imageUrl, setImageUrl] = useState("");
   const [objectives, setObjectives] = useState("");
   const [isActive, setIsActive] = useState(true);
+  const [driveUrl, setDriveUrl] = useState("");
+  const [telegramUrl, setTelegramUrl] = useState("");
   const [modules, setModules] = useState<ModuleData[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -87,6 +89,9 @@ const FormationEdit = () => {
     setImageUrl(f.image_url || "");
     setObjectives((f.objectives || []).join("\n"));
     setIsActive(f.is_active ?? true);
+    const { data: links } = await supabase.from("formation_links").select("*").eq("formation_id", id!).maybeSingle();
+    setDriveUrl(links?.drive_url || "");
+    setTelegramUrl(links?.telegram_url || "");
 
     const { data: mods } = await supabase
       .from("modules")
@@ -171,6 +176,14 @@ const FormationEdit = () => {
         // Delete existing modules/lessons then re-create
         await supabase.from("modules").delete().eq("formation_id", id!);
       }
+
+      const { error: linkErr } = await supabase.from("formation_links").upsert({
+        formation_id: formationId!,
+        drive_url: driveUrl.trim() || null,
+        telegram_url: telegramUrl.trim() || null,
+        updated_at: new Date().toISOString(),
+      });
+      if (linkErr) throw linkErr;
 
       // Create modules and lessons (upload videos first)
       for (const mod of modules) {
@@ -312,6 +325,17 @@ const FormationEdit = () => {
               <div>
                 <Label>Formateur</Label>
                 <Input value={instructor} onChange={(e) => setInstructor(e.target.value)} placeholder="Nom du formateur" />
+              </div>
+              <div className="sm:col-span-2 rounded-lg border border-primary/30 bg-primary/5 p-4 space-y-3">
+                <p className="text-sm font-semibold text-foreground">Liens d'accès (visibles uniquement après validation de la commande)</p>
+                <div>
+                  <Label>Lien Google Drive</Label>
+                  <Input value={driveUrl} onChange={(e) => setDriveUrl(e.target.value)} placeholder="https://drive.google.com/..." />
+                </div>
+                <div>
+                  <Label>Lien groupe Telegram</Label>
+                  <Input value={telegramUrl} onChange={(e) => setTelegramUrl(e.target.value)} placeholder="https://t.me/..." />
+                </div>
               </div>
               <div className="sm:col-span-2">
                 <Label>URL de l'image</Label>
