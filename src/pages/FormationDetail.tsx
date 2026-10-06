@@ -148,6 +148,7 @@ const FormationDetail = () => {
   }
 
   const isSalle = course.category === CAT_SALLE;
+  const isSpecial = course.category === CAT_SPECIAL;
   const totalLessons = modules.reduce((acc: number, m: any) => acc + (m.lessons?.length || 0), 0);
 
   return (
