@@ -40,6 +40,7 @@ const FormationDetail = () => {
   const [reference, setReference] = useState("");
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [proofPreview, setProofPreview] = useState<string | null>(null);
+  const [links, setLinks] = useState<{ drive_url: string | null; telegram_url: string | null } | null>(null);
 
   const hasAccess = orderStatus === "confirmed";
 
@@ -74,6 +75,10 @@ const FormationDetail = () => {
           .limit(1)
           .maybeSingle();
         setOrderStatus(order?.status ?? null);
+        if (order?.status === "confirmed") {
+          const { data: l } = await supabase.from("formation_links").select("drive_url, telegram_url").eq("formation_id", id!).maybeSingle();
+          setLinks(l);
+        }
       }
 
       setLoading(false);
@@ -240,18 +245,22 @@ const FormationDetail = () => {
                         : t("telegram.desc")}
                     </p>
                   </div>
-                  {isSpecial ? (
-                    <Button className="w-full bg-success text-white border-0 font-semibold hover:bg-success/90" size="lg" asChild>
-                      <Link to={`/formations/${course.id}/learn`}>
-                        <Play size={18} className="mr-2" /> Accéder à la formation
-                      </Link>
+                  {links?.drive_url && (
+                    <Button className="w-full font-semibold" size="lg" asChild>
+                      <a href={links.drive_url} target="_blank" rel="noopener noreferrer">
+                        <FileText size={18} className="mr-2" /> Ouvrir le lien Drive
+                      </a>
                     </Button>
-                  ) : (
+                  )}
+                  {links?.telegram_url && (
                     <Button className="w-full bg-success text-white border-0 font-semibold hover:bg-success/90" size="lg" asChild>
-                      <a href={SITE.telegram} target="_blank" rel="noopener noreferrer">
+                      <a href={links.telegram_url} target="_blank" rel="noopener noreferrer">
                         <Send size={18} className="mr-2" /> {t("telegram.button")}
                       </a>
                     </Button>
+                  )}
+                  {!links?.drive_url && !links?.telegram_url && (
+                    <p className="text-sm text-muted-foreground">Les liens seront bientôt ajoutés par l'administrateur.</p>
                   )}
 
                 </div>

@@ -1,13 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BookOpen, Play, Clock, CheckCircle, Loader2, BellRing, Send } from "lucide-react";
+import { BookOpen, Play, Clock, CheckCircle, Loader2, BellRing, Send, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { SITE, CAT_ONLINE } from "@/lib/site";
 
 interface EnrolledCourse {
   formation: any;
@@ -21,6 +20,8 @@ interface ApprovalNotice {
   title: string;
   category: string;
   approvedAt: string;
+  drive: string | null;
+  telegram: string | null;
 }
 
 
@@ -49,12 +50,20 @@ const MesFormations = () => {
       .eq("status", "confirmed")
       .order("updated_at", { ascending: false });
 
+    const { data: linkRows } = await supabase
+      .from("formation_links")
+      .select("formation_id, drive_url, telegram_url")
+      .in("formation_id", (orders || []).map((o) => o.formation_id));
+    const linkMap = new Map((linkRows || []).map((l) => [l.formation_id, l]));
+
     setNotices(
       (orders || []).map((o: any) => ({
         orderId: o.id,
         title: o.formations?.title || "Formation",
         category: o.formations?.category || "",
         approvedAt: o.updated_at,
+        drive: linkMap.get(o.formation_id)?.drive_url || null,
+        telegram: linkMap.get(o.formation_id)?.telegram_url || null,
       }))
     );
 
@@ -155,13 +164,22 @@ const MesFormations = () => {
                       </p>
                     </div>
                   </div>
-                  {n.category === CAT_ONLINE && (
-                    <Button size="sm" asChild className="shrink-0">
-                      <a href={SITE.telegram} target="_blank" rel="noopener noreferrer">
-                        <Send size={14} className="mr-2" /> Ouvrir groupe Telegram
-                      </a>
-                    </Button>
-                  )}
+                  <div className="flex flex-wrap gap-2 shrink-0">
+                    {n.drive && (
+                      <Button size="sm" variant="outline" asChild>
+                        <a href={n.drive} target="_blank" rel="noopener noreferrer">
+                          <FileText size={14} className="mr-2" /> Lien Drive
+                        </a>
+                      </Button>
+                    )}
+                    {n.telegram && (
+                      <Button size="sm" asChild>
+                        <a href={n.telegram} target="_blank" rel="noopener noreferrer">
+                          <Send size={14} className="mr-2" /> Ouvrir groupe Telegram
+                        </a>
+                      </Button>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}
