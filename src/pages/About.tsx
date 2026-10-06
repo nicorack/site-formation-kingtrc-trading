@@ -1,6 +1,6 @@
 import { Layout } from "@/components/Layout";
 import { motion } from "framer-motion";
-import { Video, Users, MapPin, MessageCircle, Phone } from "lucide-react";
+import { Video, Users, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useI18n } from "@/context/LanguageContext";
