@@ -12,8 +12,10 @@ export const SITE = {
 
 export const CAT_ONLINE = "Formation en ligne";
 export const CAT_SALLE = "Formation en salle";
+export const CAT_SPECIAL = "Formation Special";
 
 const USD_OVERRIDES: Record<number, number> = {
+  12000: 3,
   84000: 20,
   225000: 50,
 };

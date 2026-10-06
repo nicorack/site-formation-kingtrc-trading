@@ -11,7 +11,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-const categories = ["Formation en ligne", "Formation en salle", "Autre"];
+const categories = ["Formation en ligne", "Formation Special", "Autre"];
 const levels = [
   "Débutant",
   "Intermédiaire",

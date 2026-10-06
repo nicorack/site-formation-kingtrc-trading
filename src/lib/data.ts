@@ -1,7 +1,7 @@
 export const categories = [
   "Toutes",
   "Formation en ligne",
-  "Formation en salle",
+  "Formation Special",
 ];
 
 export const testimonials = [

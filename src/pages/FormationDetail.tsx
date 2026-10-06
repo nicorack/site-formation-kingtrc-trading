@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Layout } from "@/components/Layout";
 import { formatPrice } from "@/lib/data";
-import { SITE, CAT_SALLE, formatDual } from "@/lib/site";
+import { SITE, CAT_SALLE, CAT_SPECIAL, formatDual } from "@/lib/site";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/context/LanguageContext";
@@ -148,6 +148,7 @@ const FormationDetail = () => {
   }
 
   const isSalle = course.category === CAT_SALLE;
+  const isSpecial = course.category === CAT_SPECIAL;
   const totalLessons = modules.reduce((acc: number, m: any) => acc + (m.lessons?.length || 0), 0);
 
   return (
@@ -233,13 +234,25 @@ const FormationDetail = () => {
                     <p className="flex items-center gap-2 font-display text-sm font-semibold text-success">
                       <CheckCircle size={16} /> {t("pay.approved")}
                     </p>
-                    <p className="mt-2 text-sm text-muted-foreground">{t("telegram.desc")}</p>
+                    <p className="mt-2 text-sm text-muted-foreground">
+                      {isSpecial
+                        ? "Accès total débloqué — retrouvez toutes les leçons dans votre espace client."
+                        : t("telegram.desc")}
+                    </p>
                   </div>
-                  <Button className="w-full bg-success text-white border-0 font-semibold hover:bg-success/90" size="lg" asChild>
-                    <a href={SITE.telegram} target="_blank" rel="noopener noreferrer">
-                      <Send size={18} className="mr-2" /> {t("telegram.button")}
-                    </a>
-                  </Button>
+                  {isSpecial ? (
+                    <Button className="w-full bg-success text-white border-0 font-semibold hover:bg-success/90" size="lg" asChild>
+                      <Link to={`/formations/${course.id}/learn`}>
+                        <Play size={18} className="mr-2" /> Accéder à la formation
+                      </Link>
+                    </Button>
+                  ) : (
+                    <Button className="w-full bg-success text-white border-0 font-semibold hover:bg-success/90" size="lg" asChild>
+                      <a href={SITE.telegram} target="_blank" rel="noopener noreferrer">
+                        <Send size={18} className="mr-2" /> {t("telegram.button")}
+                      </a>
+                    </Button>
+                  )}
 
                 </div>
               ) : orderStatus === "pending" ? (
