@@ -48,17 +48,14 @@ const About = () => {
             className="rounded-xl border border-border bg-card p-6"
           >
             <Users size={28} className="mb-3 text-accent" />
-            <h2 className="font-display text-xl font-bold text-foreground">{t("about.salleTitle")}</h2>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t("about.salleDesc")}</p>
-            <p className="mt-4 font-display font-bold text-accent">{formatDual(225000)}</p>
-            <p className="mt-1 flex items-center gap-1 text-sm text-muted-foreground">
-              <MapPin size={14} className="text-accent" /> {t("salle.place")} : {SITE.salleLieu}
+            <h2 className="font-display text-xl font-bold text-foreground">2. Formation Special</h2>
+            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+              Formation de base (notions, création de compte, dépôt et retrait), analyse technique avec une stratégie simple pour trader sur le marché, et les secrets du débutant pour devenir rentable. Paiement MVola, puis accès total après validation par l'admin.
             </p>
+            <p className="mt-4 font-display font-bold text-accent">Tarif spécial : {formatDual(12000)}</p>
             <div className="mt-4 flex flex-col gap-2">
-              <Button variant="outline" asChild>
-                <a href={SITE.facebookFormateur} target="_blank" rel="noopener noreferrer">
-                  <MessageCircle size={16} className="mr-2" /> {t("salle.button")}
-                </a>
+              <Button asChild>
+                <Link to="/formations">Voir la formation</Link>
               </Button>
               <Button variant="ghost" asChild>
                 <a href={SITE.whatsapp} target="_blank" rel="noopener noreferrer">
