@@ -1,6 +1,6 @@
 import { Layout } from "@/components/Layout";
 import { motion } from "framer-motion";
-import { Video, Users, Phone } from "lucide-react";
+import { Users, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link } from "react-router-dom";
 import { useI18n } from "@/context/LanguageContext";
@@ -24,22 +24,7 @@ const About = () => {
       </section>
 
       <section className="py-16">
-        <div className="container mx-auto grid max-w-4xl gap-6 px-4 md:grid-cols-2">
-          <motion.article
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="rounded-xl border border-border bg-card p-6"
-          >
-            <Video size={28} className="mb-3 text-accent" />
-            <h2 className="font-display text-xl font-bold text-foreground">{t("about.onlineTitle")}</h2>
-            <p className="mt-3 text-sm leading-relaxed text-muted-foreground">{t("about.onlineDesc")}</p>
-            <p className="mt-4 font-display font-bold text-accent">{formatDual(84000)}</p>
-            <Button className="mt-4 w-full gradient-accent text-accent-foreground border-0" asChild>
-              <Link to="/formations">{t("nav.formations")}</Link>
-            </Button>
-          </motion.article>
-
+        <div className="container mx-auto grid max-w-4xl gap-6 px-4 ">
           <motion.article
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -48,7 +33,7 @@ const About = () => {
             className="rounded-xl border border-border bg-card p-6"
           >
             <Users size={28} className="mb-3 text-accent" />
-            <h2 className="font-display text-xl font-bold text-foreground">2. Formation Special</h2>
+            <h2 className="font-display text-xl font-bold text-foreground">FORMATION SPECIAL</h2>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Formation de base (notions, création de compte, dépôt et retrait), analyse technique avec une stratégie simple pour trader sur le marché, et les secrets du débutant pour devenir rentable. Paiement MVola, puis accès total après validation par l'admin.
             </p>

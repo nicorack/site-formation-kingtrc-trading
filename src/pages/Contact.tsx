@@ -19,7 +19,7 @@ const Contact = () => {
     const whatsappMsg = encodeURIComponent(
       `Bonjour, je suis ${name} (${email}).\n\n${message}`
     );
-    window.open(`https://wa.me/261329622668?text=${whatsappMsg}`, "_blank");
+    window.open(`${SITE.whatsapp}?text=${whatsappMsg}`, "_blank");
     toast.success("Redirection vers WhatsApp...");
     setName("");
     setEmail("");
@@ -55,8 +55,8 @@ const Contact = () => {
                   <Phone size={20} className="mt-0.5 shrink-0 text-accent" />
                   <div>
                     <p className="font-semibold text-foreground">Téléphone</p>
-                    <a href="tel:+261329622668" className="text-sm text-muted-foreground hover:text-accent transition-colors">
-                      032 96 226 68
+                    <a href="tel:+261382696825" className="text-sm text-muted-foreground hover:text-accent transition-colors">
+                      {SITE.whatsappDisplay}
                     </a>
                   </div>
                 </div>
@@ -73,7 +73,7 @@ const Contact = () => {
               </div>
 
               <a
-                href="https://wa.me/261329622668"
+                href={SITE.whatsapp}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="inline-flex items-center gap-2 rounded-xl bg-success/10 px-6 py-3 font-semibold text-success hover:bg-success/20 transition-colors"

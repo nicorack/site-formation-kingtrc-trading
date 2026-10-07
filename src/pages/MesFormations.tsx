@@ -8,6 +8,8 @@ import { Layout } from "@/components/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
+import { CAT_SPECIAL } from "@/lib/site";
+
 interface EnrolledCourse {
   formation: any;
   totalLessons: number;
@@ -22,6 +24,7 @@ interface ApprovalNotice {
   approvedAt: string;
   drive: string | null;
   telegram: string | null;
+  telegram2: string | null;
 }
 
 
@@ -42,17 +45,20 @@ const MesFormations = () => {
   }, [user, authLoading]);
 
   const fetchEnrolledCourses = async () => {
+    if (!user) return;
     // Get confirmed orders
-    const { data: orders } = await supabase
+    const { data: allOrders } = await supabase
       .from("orders")
       .select("id, formation_id, updated_at, formations(title, category)")
-      .eq("user_id", user!.id)
+      .eq("user_id", user.id)
       .eq("status", "confirmed")
       .order("updated_at", { ascending: false });
 
+    const orders = (allOrders || []).filter((order) => order.formations?.category === CAT_SPECIAL);
+
     const { data: linkRows } = await supabase
       .from("formation_links")
-      .select("formation_id, drive_url, telegram_url")
+      .select("formation_id, drive_url, telegram_url, telegram_url_2")
       .in("formation_id", (orders || []).map((o) => o.formation_id));
     const linkMap = new Map((linkRows || []).map((l) => [l.formation_id, l]));
 
@@ -64,6 +70,7 @@ const MesFormations = () => {
         approvedAt: o.updated_at,
         drive: linkMap.get(o.formation_id)?.drive_url || null,
         telegram: linkMap.get(o.formation_id)?.telegram_url || null,
+        telegram2: linkMap.get(o.formation_id)?.telegram_url_2 || null,
       }))
     );
 
@@ -79,7 +86,8 @@ const MesFormations = () => {
     const { data: formations } = await supabase
       .from("formations")
       .select("*")
-      .in("id", formationIds);
+      .in("id", formationIds)
+      .eq("category", CAT_SPECIAL);
 
     // Get all lessons for these formations via modules
     const { data: modules } = await supabase
@@ -91,7 +99,7 @@ const MesFormations = () => {
     const { data: progress } = await supabase
       .from("lesson_progress")
       .select("lesson_id, completed")
-      .eq("user_id", user!.id)
+      .eq("user_id", user.id)
       .eq("completed", true);
 
     const completedSet = new Set((progress || []).map((p: any) => p.lesson_id));
@@ -164,7 +172,7 @@ const MesFormations = () => {
                       </p>
                     </div>
                   </div>
-                  <div className="flex flex-wrap gap-2 shrink-0">
+                  <div className="flex flex-wrap gap-2">
                     {n.drive && (
                       <Button size="sm" variant="outline" asChild>
                         <a href={n.drive} target="_blank" rel="noopener noreferrer">
@@ -176,6 +184,13 @@ const MesFormations = () => {
                       <Button size="sm" asChild>
                         <a href={n.telegram} target="_blank" rel="noopener noreferrer">
                           <Send size={14} className="mr-2" /> Ouvrir groupe Telegram
+                        </a>
+                      </Button>
+                    )}
+                    {n.telegram2 && (
+                      <Button size="sm" asChild>
+                        <a href={n.telegram2} target="_blank" rel="noopener noreferrer">
+                          <Send size={14} className="mr-2" /> Ouvrir groupe Telegram 2
                         </a>
                       </Button>
                     )}

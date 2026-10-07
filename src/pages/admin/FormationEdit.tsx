@@ -58,6 +58,7 @@ const FormationEdit = () => {
   const [isActive, setIsActive] = useState(true);
   const [driveUrl, setDriveUrl] = useState("");
   const [telegramUrl, setTelegramUrl] = useState("");
+  const [telegramUrl2, setTelegramUrl2] = useState("");
   const [modules, setModules] = useState<ModuleData[]>([]);
   const [saving, setSaving] = useState(false);
 
@@ -92,6 +93,7 @@ const FormationEdit = () => {
     const { data: links } = await supabase.from("formation_links").select("*").eq("formation_id", id!).maybeSingle();
     setDriveUrl(links?.drive_url || "");
     setTelegramUrl(links?.telegram_url || "");
+    setTelegramUrl2(links?.telegram_url_2 || "");
 
     const { data: mods } = await supabase
       .from("modules")
@@ -181,6 +183,7 @@ const FormationEdit = () => {
         formation_id: formationId!,
         drive_url: driveUrl.trim() || null,
         telegram_url: telegramUrl.trim() || null,
+        telegram_url_2: telegramUrl2.trim() || null,
         updated_at: new Date().toISOString(),
       });
       if (linkErr) throw linkErr;
@@ -335,6 +338,10 @@ const FormationEdit = () => {
                 <div>
                   <Label>Lien groupe Telegram</Label>
                   <Input value={telegramUrl} onChange={(e) => setTelegramUrl(e.target.value)} placeholder="https://t.me/..." />
+                </div>
+                <div>
+                  <Label>Lien groupe Telegram 2</Label>
+                  <Input value={telegramUrl2} onChange={(e) => setTelegramUrl2(e.target.value)} placeholder="https://t.me/..." />
                 </div>
               </div>
               <div className="sm:col-span-2">
