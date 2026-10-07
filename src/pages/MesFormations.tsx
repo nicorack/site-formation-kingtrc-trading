@@ -22,7 +22,6 @@ interface ApprovalNotice {
 const MesFormations = () => {
   const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
-  const [courses, setCourses] = useState<EnrolledCourse[]>([]);
   const [notices, setNotices] = useState<ApprovalNotice[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -66,49 +65,6 @@ const MesFormations = () => {
     );
 
 
-    if (!orders || orders.length === 0) {
-      setLoading(false);
-      return;
-    }
-
-    const formationIds = orders.map((o) => o.formation_id);
-
-    // Get formations
-    const { data: formations } = await supabase
-      .from("formations")
-      .select("*")
-      .in("id", formationIds)
-      .eq("category", CAT_SPECIAL);
-
-    // Get all lessons for these formations via modules
-    const { data: modules } = await supabase
-      .from("modules")
-      .select("id, formation_id, lessons(id)")
-      .in("formation_id", formationIds);
-
-    // Get user progress
-    const { data: progress } = await supabase
-      .from("lesson_progress")
-      .select("lesson_id, completed")
-      .eq("user_id", user.id)
-      .eq("completed", true);
-
-    const completedSet = new Set((progress || []).map((p: any) => p.lesson_id));
-
-    const enrolled: EnrolledCourse[] = (formations || []).map((f: any) => {
-      const fModules = (modules || []).filter((m: any) => m.formation_id === f.id);
-      const lessonIds = fModules.flatMap((m: any) => (m.lessons || []).map((l: any) => l.id));
-      const totalLessons = lessonIds.length;
-      const completedLessons = lessonIds.filter((id: string) => completedSet.has(id)).length;
-      return {
-        formation: f,
-        totalLessons,
-        completedLessons,
-        progress: totalLessons > 0 ? Math.round((completedLessons / totalLessons) * 100) : 0,
-      };
-    });
-
-    setCourses(enrolled);
     setLoading(false);
   };
 
