@@ -29,7 +29,7 @@ export function Footer() {
               <span className="text-lg font-bold font-display">Expert en King TRC</span>
             </div>
             <p className="text-sm text-primary-foreground/70 leading-relaxed">
-              FORMATION SPECIAL : formation trading pour devenir un trader rentable et discipliné.
+              RÉUSSIR ENSEMBLE EN TRADING : formation trading pour devenir un trader rentable et discipliné.
             </p>
           </div>
 

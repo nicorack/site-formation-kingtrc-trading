@@ -33,7 +33,7 @@ const About = () => {
             className="rounded-xl border border-border bg-card p-6"
           >
             <Users size={28} className="mb-3 text-accent" />
-            <h2 className="font-display text-xl font-bold text-foreground">FORMATION SPECIAL</h2>
+            <h2 className="font-display text-xl font-bold text-foreground">RÉUSSIR ENSEMBLE EN TRADING</h2>
             <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
               Formation de base (notions, création de compte, dépôt et retrait), analyse technique avec une stratégie simple pour trader sur le marché, et les secrets du débutant pour devenir rentable. Paiement MVola, puis accès total après validation par l'admin.
             </p>
