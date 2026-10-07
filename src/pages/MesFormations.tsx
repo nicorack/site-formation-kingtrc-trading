@@ -1,21 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BookOpen, Play, Clock, CheckCircle, Loader2, BellRing, Send, FileText } from "lucide-react";
+import { BookOpen, Loader2, BellRing, Send, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
 import { Layout } from "@/components/Layout";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 
 import { CAT_SPECIAL } from "@/lib/site";
-
-interface EnrolledCourse {
-  formation: any;
-  totalLessons: number;
-  completedLessons: number;
-  progress: number;
-}
 
 interface ApprovalNotice {
   orderId: string;
