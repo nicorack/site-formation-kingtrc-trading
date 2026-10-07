@@ -19,18 +19,21 @@ export type Database = {
           drive_url: string | null
           formation_id: string
           telegram_url: string | null
+          telegram_url_2: string | null
           updated_at: string
         }
         Insert: {
           drive_url?: string | null
           formation_id: string
           telegram_url?: string | null
+          telegram_url_2?: string | null
           updated_at?: string
         }
         Update: {
           drive_url?: string | null
           formation_id?: string
           telegram_url?: string | null
+          telegram_url_2?: string | null
           updated_at?: string
         }
         Relationships: [
