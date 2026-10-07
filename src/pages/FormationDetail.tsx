@@ -40,7 +40,7 @@ const FormationDetail = () => {
   const [reference, setReference] = useState("");
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [proofPreview, setProofPreview] = useState<string | null>(null);
-  const [links, setLinks] = useState<{ drive_url: string | null; telegram_url: string | null } | null>(null);
+  const [links, setLinks] = useState<{ drive_url: string | null; telegram_url: string | null; telegram_url_2: string | null } | null>(null);
 
   const hasAccess = orderStatus === "confirmed";
 
@@ -76,7 +76,7 @@ const FormationDetail = () => {
           .maybeSingle();
         setOrderStatus(order?.status ?? null);
         if (order?.status === "confirmed") {
-          const { data: l } = await supabase.from("formation_links").select("drive_url, telegram_url").eq("formation_id", id!).maybeSingle();
+          const { data: l } = await supabase.from("formation_links").select("drive_url, telegram_url, telegram_url_2").eq("formation_id", id!).maybeSingle();
           setLinks(l);
         }
       }
@@ -259,7 +259,15 @@ const FormationDetail = () => {
                       </a>
                     </Button>
                   )}
-                  {!links?.drive_url && !links?.telegram_url && (
+
+                  {links?.telegram_url_2 && (
+                    <Button className="w-full font-semibold" size="lg" asChild>
+                      <a href={links.telegram_url_2} target="_blank" rel="noopener noreferrer">
+                        <Send size={18} className="mr-2" /> Ouvrir groupe Telegram 2
+                      </a>
+                    </Button>
+                  )}
+                  {!links?.drive_url && !links?.telegram_url && !links?.telegram_url_2 && (
                     <p className="text-sm text-muted-foreground">Les liens seront bientôt ajoutés par l'administrateur.</p>
                   )}
 

@@ -29,7 +29,7 @@ export function Footer() {
               <span className="text-lg font-bold font-display">Expert en King TRC</span>
             </div>
             <p className="text-sm text-primary-foreground/70 leading-relaxed">
-              Formations trading en ligne et en salle pour devenir un trader rentable et discipliné.
+              FORMATION SPECIAL : formation trading pour devenir un trader rentable et discipliné.
             </p>
           </div>
 
@@ -79,7 +79,7 @@ export function Footer() {
               </li>
               <li className="flex items-center gap-2 text-sm text-primary-foreground/70">
                 <Phone size={14} className="text-accent shrink-0" />
-                <a href="tel:+261329622668" className="hover:text-accent transition-colors">032 96 226 68</a>
+                <a href="tel:+261382696825" className="hover:text-accent transition-colors">{SITE.whatsappDisplay}</a>
               </li>
             </ul>
             <a

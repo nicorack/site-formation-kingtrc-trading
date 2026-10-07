@@ -1,0 +1,1 @@
+ALTER TABLE public.formation_links ADD COLUMN IF NOT EXISTS telegram_url_2 text;
