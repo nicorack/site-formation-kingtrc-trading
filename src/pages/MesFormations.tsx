@@ -202,10 +202,9 @@ const MesFormations = () => {
         </section>
       )}
 
-      <section className="py-10">
-        <div className="container mx-auto px-4">
-
-          {courses.length === 0 ? (
+      {notices.length === 0 && (
+        <section className="py-10">
+          <div className="container mx-auto px-4">
             <div className="rounded-xl border border-border bg-card p-12 text-center">
               <BookOpen size={48} className="mx-auto mb-4 text-muted-foreground" />
               <h2 className="mb-2 font-display text-xl font-bold text-foreground">Aucune formation</h2>
@@ -214,59 +213,9 @@ const MesFormations = () => {
                 <Link to="/formations">Découvrir les formations</Link>
               </Button>
             </div>
-          ) : (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {courses.map(({ formation, totalLessons, completedLessons, progress }) => (
-                <div
-                  key={formation.id}
-                  className="group rounded-xl border border-border bg-card overflow-hidden hover:shadow-card-hover transition-shadow"
-                >
-                  {formation.image_url && (
-                    <img
-                      src={formation.image_url}
-                      alt={formation.title}
-                      className="h-40 w-full object-cover"
-                      loading="lazy"
-                    />
-                  )}
-                  <div className="p-5 space-y-3">
-                    <div className="flex items-start justify-between gap-2">
-                      <h3 className="font-display font-bold text-foreground line-clamp-2">{formation.title}</h3>
-                      <Badge variant={progress === 100 ? "default" : "secondary"} className="shrink-0 text-xs">
-                        {progress === 100 ? "Terminé" : `${progress}%`}
-                      </Badge>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>{completedLessons} / {totalLessons} leçons</span>
-                        <span>{progress}%</span>
-                      </div>
-                      <Progress value={progress} className="h-2" />
-                    </div>
-
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                      {formation.duration && (
-                        <span className="flex items-center gap-1"><Clock size={12} /> {formation.duration}</span>
-                      )}
-                      {progress === 100 && (
-                        <span className="flex items-center gap-1 text-accent"><CheckCircle size={12} /> Complété</span>
-                      )}
-                    </div>
-
-                    <Button className="w-full" size="sm" asChild>
-                      <Link to={`/formations/${formation.id}/learn`}>
-                        <Play size={14} className="mr-2" />
-                        {progress > 0 && progress < 100 ? "Continuer" : progress === 100 ? "Revoir" : "Commencer"}
-                      </Link>
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </section>
+          </div>
+        </section>
+      )}
     </Layout>
   );
 };
