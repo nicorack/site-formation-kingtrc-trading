@@ -73,9 +73,8 @@ export function CourseCard({ course }: CourseCardProps) {
           </span>
         </div>
 
-        {/* Price & Instructor */}
-        <div className="flex items-end justify-between border-t border-border pt-4">
-          <div>
+        {/* Price */}
+        <div className="flex items-end justify-end border-t border-border pt-4">
           <div className="text-right">
             {course.original_price && (
               <span className="block text-xs text-muted-foreground line-through">
