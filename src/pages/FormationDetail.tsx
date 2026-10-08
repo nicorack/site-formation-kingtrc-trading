@@ -12,7 +12,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Layout } from "@/components/Layout";
 import { formatPrice } from "@/lib/data";
-import { SITE, CAT_SALLE, CAT_SPECIAL, formatDual } from "@/lib/site";
+import { SITE, CAT_SALLE, CAT_SPECIAL, formatDual, formationCategoryLabel } from "@/lib/site";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useI18n } from "@/context/LanguageContext";
@@ -166,7 +166,7 @@ const FormationDetail = () => {
           <div className="grid gap-8 lg:grid-cols-3">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="lg:col-span-2">
               <div className="mb-3 flex flex-wrap items-center gap-2">
-                <Badge className="bg-accent/20 text-accent border-accent/30">{course.category}</Badge>
+                <Badge className="bg-accent/20 text-accent border-accent/30">{formationCategoryLabel(course.category)}</Badge>
                 {course.original_price && (
                   <Badge className="gradient-accent border-0 text-accent-foreground text-[10px] uppercase tracking-wider">
                     Promo
