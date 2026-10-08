@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Layout } from "@/components/Layout";
 import { CourseCard } from "@/components/CourseCard";
 import { categories } from "@/lib/data";
+import { formationCategoryLabel } from "@/lib/site";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -75,7 +76,7 @@ const Formations = () => {
                     : "bg-secondary text-secondary-foreground hover:bg-muted"
                 }`}
               >
-                {cat}
+                {formationCategoryLabel(cat)}
               </button>
             ))}
           </div>

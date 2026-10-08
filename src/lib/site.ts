@@ -14,6 +14,10 @@ export const CAT_ONLINE = "Formation en ligne";
 export const CAT_SALLE = "Formation en salle";
 export const CAT_SPECIAL = "Formation Special";
 
+export function formationCategoryLabel(category: string) {
+  return category === CAT_SPECIAL ? "Formation SEMI-GRATUIT" : category;
+}
+
 const USD_OVERRIDES: Record<number, number> = {
   12000: 3,
   84000: 20,

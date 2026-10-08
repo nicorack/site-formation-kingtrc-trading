@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Star, Clock, Users } from "lucide-react";
 import { formatPrice } from "@/lib/data";
-import { formatDual } from "@/lib/site";
+import { formatDual, formationCategoryLabel } from "@/lib/site";
 import { Badge } from "@/components/ui/badge";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -48,7 +48,7 @@ export function CourseCard({ course }: CourseCardProps) {
       {/* Content */}
       <div className="flex flex-1 flex-col p-5">
         <span className="mb-2 text-xs font-medium uppercase tracking-wider text-accent">
-          {course.category}
+          {formationCategoryLabel(course.category)}
         </span>
         <h3 className="mb-2 font-display text-lg font-semibold text-card-foreground leading-snug group-hover:text-accent transition-colors line-clamp-2">
           {course.title}
