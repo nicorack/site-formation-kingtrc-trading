@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { Star, Clock, Users } from "lucide-react";
 import { formatPrice } from "@/lib/data";
-import { formatDual, formationCategoryLabel } from "@/lib/site";
+import { CAT_SPECIAL, formatDual, formationCategoryLabel } from "@/lib/site";
 import { Badge } from "@/components/ui/badge";
 import type { Tables } from "@/integrations/supabase/types";
 
@@ -74,8 +74,13 @@ export function CourseCard({ course }: CourseCardProps) {
         </div>
 
         {/* Price */}
-        <div className="flex items-end justify-end border-t border-border pt-4">
-          <div className="text-right">
+        <div className="flex flex-wrap items-end justify-between gap-3 border-t border-border pt-4">
+          {course.category === CAT_SPECIAL && (
+            <p className="w-full text-sm font-medium leading-relaxed text-card-foreground">
+              Vidéo pré-enregistrée teny malagasy.
+            </p>
+          )}
+          <div className="ml-auto text-right">
             {course.original_price && (
               <span className="block text-xs text-muted-foreground line-through">
                 {formatPrice(course.original_price)}
